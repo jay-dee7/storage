@@ -13,18 +13,14 @@ type MultiTenantMongoDB struct {
 }
 
 // CreateMongoDB creates a MongoDB backed storage backend
-func CreateMultiTenantMongoDB(uri, db, coll string) *MultiTenantMongoDB {
+func CreateMultiTenantMongoDB(uri, db string) *MultiTenantMongoDB {
 	log.Printf("Connecting to MongoDB: %s\n", uri)
 	session, err := mgo.Dial(uri)
 	if err != nil {
 		log.Printf("Error connecting to MongoDB: %s", err)
 		return nil
 	}
-	err = session.DB(db).C(coll).EnsureIndexKey("created")
-	if err != nil {
-		log.Printf("Failed creating index: %s", err)
-		return nil
-	}
+  
 	return &MultiTenantMongoDB{
 		database:    session.DB(db),
 	}
