@@ -20,7 +20,7 @@ func CreateMultiTenantMongoDB(uri, db string) *MultiTenantMongoDB {
 		log.Printf("Error connecting to MongoDB: %s", err)
 		return nil
 	}
-
+  
 	return &MultiTenantMongoDB{
 		database:    session.DB(db),
 	}
