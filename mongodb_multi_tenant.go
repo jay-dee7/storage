@@ -1,15 +1,16 @@
 package storage
 
 import (
+	"log"
+
 	"github.com/mailhog/data"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"log"
 )
 
 // MongoDB represents MongoDB backed storage backend
 type MultiTenantMongoDB struct {
-	database    *mgo.Database
+	database *mgo.Database
 }
 
 // CreateMongoDB creates a MongoDB backed storage backend
@@ -20,19 +21,20 @@ func CreateMultiTenantMongoDB(uri, db string) *MultiTenantMongoDB {
 		log.Printf("Error connecting to MongoDB: %s", err)
 		return nil
 	}
-  
+
 	return &MultiTenantMongoDB{
-		database:    session.DB(db),
+		database: session.DB(db),
 	}
 }
 
 // Store stores a message in MongoDB and returns its storage ID
 func (m *MultiTenantMongoDB) Store(msg *data.Message, tenant string) (string, error) {
-	err := m.database.C(tenant).Insert(m)
+	err := m.database.C(tenant).Insert(msg)
 	if err != nil {
 		log.Printf("Error inserting message: %s", err)
 		return "", err
 	}
+	
 	return string(msg.ID), nil
 }
 
