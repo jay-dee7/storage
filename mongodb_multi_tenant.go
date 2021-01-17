@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/mailhog/data"
@@ -14,7 +15,7 @@ type MultiTenantMongoDB struct {
 }
 
 // CreateMongoDB creates a MongoDB backed storage backend
-func CreateMultiTenantMongoDB(uri, db string) *MultiTenantMongoDB {
+func CreateMultiTenantMongoDB(uri, db string) MultiTenantStorage {
 	log.Printf("Connecting to MongoDB: %s\n", uri)
 	session, err := mgo.Dial(uri)
 	if err != nil {
@@ -45,33 +46,35 @@ func (m *MultiTenantMongoDB) Count(tenant string) int {
 }
 
 // Search finds messages matching the query
-func (m *MultiTenantMongoDB) Search(kind, query string, start, limit int, tenant string) (*data.Messages, int, error) {
-	messages := &data.Messages{}
-	var count = 0
-	var field = "raw.data"
-	switch kind {
-	case "to":
-		field = "raw.to"
-	case "from":
-		field = "raw.from"
-	}
-	err := m.database.C(tenant).Find(bson.M{field: bson.RegEx{Pattern: query, Options: "i"}}).Skip(start).Limit(limit).Sort("-created").Select(bson.M{
-		"id":              1,
-		"_id":             1,
-		"from":            1,
-		"to":              1,
-		"content.headers": 1,
-		"content.size":    1,
-		"created":         1,
-		"raw":             1,
-	}).All(messages)
-	if err != nil {
-		log.Printf("Error loading messages: %s", err)
-		return nil, 0, err
-	}
-	count, _ = m.database.C(tenant).Find(bson.M{field: bson.RegEx{Pattern: query, Options: "i"}}).Count()
+func (m *MultiTenantMongoDB) Search(filter interface{}, start, limit int, tenant string) (*data.Messages, int, error) {
+	//messages := &data.Messages{}
+	//var count = 0
+	//var field = "raw.data"
+	//switch kind {
+	//case "to":
+	//	field = "raw.to"
+	//case "from":
+	//	field = "raw.from"
+	//}
+	//err := m.database.C(tenant).Find(bson.M{field: bson.RegEx{Pattern: query, Options: "i"}}).Skip(start).Limit(limit).Sort("-created").Select(bson.M{
+	//	"id":              1,
+	//	"_id":             1,
+	//	"from":            1,
+	//	"to":              1,
+	//	"content.headers": 1,
+	//	"content.size":    1,
+	//	"created":         1,
+	//	"raw":             1,
+	//}).All(messages)
+	//if err != nil {
+	//	log.Printf("Error loading messages: %s", err)
+	//	return nil, 0, err
+	//}
+	//count, _ = m.database.C(tenant).Find(bson.M{field: bson.RegEx{Pattern: query, Options: "i"}}).Count()
+	//
+	//return messages, count, nil
 
-	return messages, count, nil
+	return nil, 0, fmt.Errorf("error: method not implemented")
 }
 
 // List returns a list of messages by index
