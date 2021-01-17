@@ -34,7 +34,7 @@ func (m *MultiTenantMongoDB) Store(msg *data.Message, tenant string) (string, er
 		log.Printf("Error inserting message: %s", err)
 		return "", err
 	}
-	
+
 	return string(msg.ID), nil
 }
 

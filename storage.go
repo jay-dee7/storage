@@ -17,7 +17,7 @@ type Storage interface {
 type MultiTenantStorage interface {
 	Store(m *data.Message, tenant string) (string, error)
 	List(start, limit int, tenant string) (*data.Messages, error)
-	Search(kind, query string, start, limit int, tenant string) (*data.Messages, int, error)
+	Search(filter interface{}, start, limit int, tenant string) (*data.Messages, int, error)
 	Count(tenant string) int
 	DeleteOne(id, tenant string) error
 	DeleteAll(tenant string) error
